@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: zuul-server
+  mvc:
+    servlet:
+      load-on-startup: 1
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+    sender:
+      type: web
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      #表示eureka client间隔多久去拉取服务注册信息，默认为30秒，对于网关，如果要迅速获取服务注册状态，可以缩小该值，比如5秒
+    registry-fetch-interval-seconds: 5
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+# zuul的高可用十分关键，因为外部请求到后端微服务的流量都会经过Zuul,故而生产环境下一般需要部署高可用的Zuul避免单点故障
+# 1、如果客户端也注册到了Eureka server上，这种情况下，Zuul的高可用十分简单，只需要将多个zuul节点注册到Eureka Server上即可
+# 2、如果Zuul 客户端是手机App，需借助额外负载均衡器来实现Zuul的高可用，例如：Nginx、HAProxy、F5等.
+zuul:
+  # 使用'*' 忽略所有服务，只由路由来指定服务
+  ignored-services: '*'
+  # 敏感heard 设置，可指定一些敏感的heard列表，默认：cookie,set-cookie,Authorization, 如果使用该注解，会覆盖全局的配置
+  sensitiveHeaders:
+  routes:
+    # oauth 只是给路由一个名称，可任意取名
+    oauth:
+      # 微服务对应路径，/api-o/下的路径调用oauth-server的接口路径
+      path: /api-o/**
+      # 服务ID，对应的微服务的Spring.application.name
+      serviceId: oauth-server
+      #path 和 url 配合时，可以将/api-o/映射到http://localhost:9098/,这样配置路由不会做为HystrixCommand执行，同时也不能使用Ribbon来负载均衡多个url
+#      url: http://localhost:9098/
+    complaint:
+      path: /api-c/**
+      serviceId: complaint-server
+  host:
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 60000
+  add-proxy-headers: true
+  ribbon:
+    eager-load:
+      enabled: true
+# zuul的文件上传配置，低于1M 的文件上传可以无需任何处理，即可正常上传
+# 上传大文件得将超时时间设置长一些，否则回报超时异常，对于10M以上大文件上传路径需加上 /zuul前缀，如http://{host}:{port}/upload是微服务server1的文件上传路径
+# 则可以使用Zuul的 /zuul/server1/upload 路径上传大文件
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000

@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: config-center
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/configs/{profile}
+#          search-locations:  /Users/krystal/Documents/configs/
+        git:
+          uri: https://github.com/748079585/config.git
+          default-label: master
+          force-pull: true
+          search-paths: "{profile}"
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: admin
+#    password: admin
+server:
+  port: 9090
+eureka:
+  client:
+    service-url:
+      default-zone: localhost:8761/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
+    instance-id: ${spring.application.name}
+    prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        # 加载所有的端点,   /默认下只加载了 info / health
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
