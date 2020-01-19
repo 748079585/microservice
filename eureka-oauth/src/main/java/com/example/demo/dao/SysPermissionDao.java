@@ -2,6 +2,9 @@ package com.example.demo.dao;
 
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +27,12 @@ public interface SysPermissionDao extends JpaRepository<SysPermission, Long>{
 	Set<SysPermission> findPermissionsByRoleIds(@Param("ids") Set<Long> roleIds);
 	
 	SysPermission findByPermission(String permission);
+	
+	/**
+	 * 更具条件查询所有设备并分页
+	 * @param specification 条件
+	 * @param pageable 分页参数
+	 * @return
+	 */
+	Page<SysPermission> findAll(Specification<SysPermission> specification, Pageable pageable);
 }

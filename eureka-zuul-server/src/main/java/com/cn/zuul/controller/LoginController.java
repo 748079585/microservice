@@ -59,6 +59,7 @@ public class LoginController {
         parameters.put("username", username);
         parameters.put("password", password);
 
+        log.info("调用oauth 服务获取token");
         Map<String, Object> tokenInfo = client.postAccessToken(parameters);
         log.debug("用户名密码登录");
 

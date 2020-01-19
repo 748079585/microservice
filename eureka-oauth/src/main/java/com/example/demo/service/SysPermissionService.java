@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
 import com.example.demo.entity.SysPermission;
+import com.example.demo.model.PermissionQueryParam;
 
 /**
  * @author lei
@@ -44,5 +45,7 @@ public interface SysPermissionService {
 	 * @param params
 	 * @return
 	 */
-	Page<SysPermission> findPermissions(Map<String, Object> params);
+	Page<SysPermission> findPermissions(PermissionQueryParam params);
+	
+	List<SysPermission> findAllPermissions();
 }
