@@ -20,12 +20,12 @@ public class PermissionQueryParam {
 	private int limit;
 	
 	/**
-	 * 权限表 permission 查询
+	 * 权限表 不为空则 对 permission 查询
 	 */
 	private String permission;
 	
 	/**
-	 * 权限表 name 查询
+	 * 权限表 不为空则 对 name 查询
 	 */
 	private String name;
 	
@@ -33,6 +33,7 @@ public class PermissionQueryParam {
 	 * 目前只通过ID排序，前端只传 +id 、 -id
 	 * +id : id 递增排序
 	 * -id : id 递减排序
+	 * 为空则不排序
 	 */
 	private String sort;
 }
